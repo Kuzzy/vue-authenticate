@@ -52,6 +52,13 @@ export default class VueAuthenticate {
     } else {
       throw new Error('Request interceptor must be functions')
     }
+
+    // Setup response interceptors
+    if (this.options.bindResponseInterceptor && isFunction(this.options.bindResponseInterceptor)) {
+      this.options.bindResponseInterceptor.call(this, this);
+    } else {
+      throw new Error('Response interceptor must be functions')
+    }
   }
 
   /**
@@ -97,7 +104,7 @@ export default class VueAuthenticate {
     if (response[this.options.responseDataKey]) {
       response = response[this.options.responseDataKey]
     }
-    
+
     const responseTokenPath = tokenPath || this.options.tokenPath
     const token = getObjectProperty(response, responseTokenPath)
 
@@ -117,7 +124,7 @@ export default class VueAuthenticate {
       } catch (e) {}
     }
   }
-  
+
   /**
    * Login user using email and password
    * @param  {Object} user           User data
@@ -185,7 +192,7 @@ export default class VueAuthenticate {
 
   /**
    * Authenticate user using authentication provider
-   * 
+   *
    * @param  {String} provider       Provider name
    * @param  {Object} userData       User data
    * @return {Promise}               Request promise

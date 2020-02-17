@@ -1255,6 +1255,13 @@ var VueAuthenticate = function VueAuthenticate($http, overrideOptions) {
   } else {
     throw new Error('Request interceptor must be functions')
   }
+
+  // Setup response interceptors
+  if (this.options.bindResponseInterceptor && isFunction(this.options.bindResponseInterceptor)) {
+    this.options.bindResponseInterceptor.call(this, this);
+  } else {
+    throw new Error('Response interceptor must be functions')
+  }
 };
 
 /**
@@ -1300,7 +1307,7 @@ VueAuthenticate.prototype.setToken = function setToken (response, tokenPath) {
   if (response[this.options.responseDataKey]) {
     response = response[this.options.responseDataKey];
   }
-    
+
   var responseTokenPath = tokenPath || this.options.tokenPath;
   var token = getObjectProperty(response, responseTokenPath);
 
@@ -1320,7 +1327,7 @@ VueAuthenticate.prototype.getPayload = function getPayload () {
     } catch (e) {}
   }
 };
-  
+
 /**
  * Login user using email and password
  * @param{Object} user         User data
@@ -1394,7 +1401,7 @@ VueAuthenticate.prototype.logout = function logout (requestOptions) {
 
 /**
  * Authenticate user using authentication provider
- * 
+ *
  * @param{String} provider     Provider name
  * @param{Object} userData     User data
  * @return {Promise}             Request promise
